@@ -1,12 +1,12 @@
 <?php
 
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien@symfony.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Symfony\Bundle\FrameworkBundle\DependencyInjection;
@@ -46,7 +46,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('charset')->setInfo('general configuration')->end()
+                ->scalarNode('charset')->info('general configuration')->end()
                 ->scalarNode('trust_proxy_headers')->defaultFalse()->end()
                 ->scalarNode('secret')->isRequired()->end()
                 ->scalarNode('ide')->defaultNull()->end()
@@ -73,7 +73,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('form')
-                    ->setInfo('form configuration')
+                    ->info('form configuration')
                     ->canBeUnset()
                     ->treatNullLike(array('enabled' => true))
                     ->treatTrueLike(array('enabled' => true))
@@ -99,7 +99,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('esi')
-                    ->setInfo('esi configuration')
+                    ->info('esi configuration')
                     ->canBeUnset()
                     ->treatNullLike(array('enabled' => true))
                     ->treatTrueLike(array('enabled' => true))
@@ -116,7 +116,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('profiler')
-                    ->setInfo('profiler configuration')
+                    ->info('profiler configuration')
                     ->canBeUnset()
                     ->children()
                         ->booleanNode('only_exceptions')->defaultFalse()->end()
@@ -130,7 +130,10 @@ class Configuration implements ConfigurationInterface
                             ->performNoDeepMerging()
                             ->children()
                                 ->scalarNode('ip')->end()
-                                ->scalarNode('path')->end()
+                                ->scalarNode('path')
+                                    ->info('use the urldecoded format')
+                                    ->example('^/path to resource/')
+                                ->end()
                                 ->scalarNode('service')->end()
                             ->end()
                         ->end()
@@ -145,7 +148,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('router')
-                    ->setInfo('router configuration')
+                    ->info('router configuration')
                     ->canBeUnset()
                     ->children()
                         ->scalarNode('resource')->isRequired()->end()
@@ -163,22 +166,27 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('session')
-                    ->setInfo('session configuration')
+                    ->info('session configuration')
                     ->canBeUnset()
                     ->children()
                         ->booleanNode('auto_start')->defaultFalse()->end()
-                        ->scalarNode('storage_id')->defaultValue('session.storage.native_file')->end()
+                        ->scalarNode('storage_id')->defaultValue('session.storage.native')->end()
+                        ->scalarNode('handler_id')->defaultValue('session.handler.native_file')->end()
                         ->scalarNode('name')->end()
                         ->scalarNode('cookie_lifetime')->end()
                         ->scalarNode('cookie_path')->end()
                         ->scalarNode('cookie_domain')->end()
                         ->booleanNode('cookie_secure')->end()
                         ->booleanNode('cookie_httponly')->end()
-                        ->scalarNode('lifetime')->setInfo('DEPRECATED! Please use: cookie_lifetime')->end()
-                        ->scalarNode('path')->setInfo('DEPRECATED! Please use: cookie_path')->end()
-                        ->scalarNode('domain')->setInfo('DEPRECATED! Please use: cookie_domain')->end()
-                        ->booleanNode('secure')->setInfo('DEPRECATED! Please use: cookie_secure')->end()
-                        ->booleanNode('httponly')->setInfo('DEPRECATED! Please use: cookie_httponly')->end()
+                        ->scalarNode('gc_divisor')->end()
+                        ->scalarNode('gc_probability')->end()
+                        ->scalarNode('gc_maxlifetime')->end()
+                        ->scalarNode('save_path')->defaultValue('%kernel.cache_dir%/sessions')->end()
+                        ->scalarNode('lifetime')->info('DEPRECATED! Please use: cookie_lifetime')->end()
+                        ->scalarNode('path')->info('DEPRECATED! Please use: cookie_path')->end()
+                        ->scalarNode('domain')->info('DEPRECATED! Please use: cookie_domain')->end()
+                        ->booleanNode('secure')->info('DEPRECATED! Please use: cookie_secure')->end()
+                        ->booleanNode('httponly')->info('DEPRECATED! Please use: cookie_httponly')->end()
                     ->end()
                 ->end()
             ->end()
@@ -187,8 +195,7 @@ class Configuration implements ConfigurationInterface
 
     private function addTemplatingSection(ArrayNodeDefinition $rootNode)
     {
-        $organizeUrls = function($urls)
-        {
+        $organizeUrls = function($urls) {
             $urls += array(
                 'http' => array(),
                 'ssl'  => array(),
@@ -211,7 +218,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('templating')
-                    ->setInfo('templating configuration')
+                    ->info('templating configuration')
                     ->canBeUnset()
                     ->children()
                         ->scalarNode('assets_version')->defaultValue(null)->end()
@@ -261,7 +268,7 @@ class Configuration implements ConfigurationInterface
                     ->fixXmlConfig('engine')
                     ->children()
                         ->arrayNode('engines')
-                            ->setExample(array('twig'))
+                            ->example(array('twig'))
                             ->isRequired()
                             ->requiresAtLeastOneElement()
                             ->beforeNormalization()
@@ -324,7 +331,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('translator')
-                    ->setInfo('translator configuration')
+                    ->info('translator configuration')
                     ->canBeUnset()
                     ->treatNullLike(array('enabled' => true))
                     ->treatTrueLike(array('enabled' => true))
@@ -342,7 +349,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('validation')
-                    ->setInfo('validation configuration')
+                    ->info('validation configuration')
                     ->canBeUnset()
                     ->treatNullLike(array('enabled' => true))
                     ->treatTrueLike(array('enabled' => true))
@@ -361,7 +368,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('annotations')
-                    ->setInfo('annotation configuration')
+                    ->info('annotation configuration')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('cache')->defaultValue('file')->end()

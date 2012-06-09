@@ -200,6 +200,8 @@ class Command
      * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
+     * @return integer The command exit code
+     *
      * @see setCode()
      * @see execute()
      *
@@ -308,6 +310,19 @@ class Command
     public function getDefinition()
     {
         return $this->definition;
+    }
+
+    /**
+     * Gets the InputDefinition to be used to create XML and Text representations of this Command.
+     *
+     * Can be overridden to provide the original command representation when it would otherwise
+     * be changed by merging with the application InputDefinition.
+     *
+     * @return InputDefinition An InputDefinition instance
+     */
+    protected function getNativeDefinition()
+    {
+        return $this->getDefinition();
     }
 
     /**
@@ -543,11 +558,11 @@ class Command
             $messages[] = '<comment>Aliases:</comment> <info>'.implode(', ', $this->getAliases()).'</info>';
         }
 
-        $messages[] = $this->definition->asText();
+        $messages[] = $this->getNativeDefinition()->asText();
 
         if ($help = $this->getProcessedHelp()) {
             $messages[] = '<comment>Help:</comment>';
-            $messages[] = ' '.implode("\n ", explode("\n", $help))."\n";
+            $messages[] = ' '.str_replace("\n", "\n ", $help)."\n";
         }
 
         return implode("\n", $messages);
@@ -572,11 +587,10 @@ class Command
         $usageXML->appendChild($dom->createTextNode(sprintf($this->getSynopsis(), '')));
 
         $commandXML->appendChild($descriptionXML = $dom->createElement('description'));
-        $descriptionXML->appendChild($dom->createTextNode(implode("\n ", explode("\n", $this->getDescription()))));
+        $descriptionXML->appendChild($dom->createTextNode(str_replace("\n", "\n ", $this->getDescription())));
 
         $commandXML->appendChild($helpXML = $dom->createElement('help'));
-        $help = $this->help;
-        $helpXML->appendChild($dom->createTextNode(implode("\n ", explode("\n", $help))));
+        $helpXML->appendChild($dom->createTextNode(str_replace("\n", "\n ", $this->getProcessedHelp())));
 
         $commandXML->appendChild($aliasesXML = $dom->createElement('aliases'));
         foreach ($this->getAliases() as $alias) {
@@ -584,7 +598,7 @@ class Command
             $aliasXML->appendChild($dom->createTextNode($alias));
         }
 
-        $definition = $this->definition->asXml(true);
+        $definition = $this->getNativeDefinition()->asXml(true);
         $commandXML->appendChild($dom->importNode($definition->getElementsByTagName('arguments')->item(0), true));
         $commandXML->appendChild($dom->importNode($definition->getElementsByTagName('options')->item(0), true));
 

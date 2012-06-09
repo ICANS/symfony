@@ -1,12 +1,12 @@
 <?php
 
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien@symfony.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Symfony\Bundle\TwigBundle\DependencyInjection;
@@ -56,7 +56,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('resources')
                             ->addDefaultChildrenIfNoneSet()
                             ->prototype('scalar')->defaultValue('form_div_layout.html.twig')->end()
-                            ->setExample(array('MyBundle::form.html.twig'))
+                            ->example(array('MyBundle::form.html.twig'))
                             ->validate()
                                 ->ifTrue(function($v) { return !in_array('form_div_layout.html.twig', $v); })
                                 ->then(function($v){
@@ -77,7 +77,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('globals')
                     ->useAttributeAsKey('key')
-                    ->setExample(array('foo' => '"@bar"', 'pi' => 3.14))
+                    ->example(array('foo' => '"@bar"', 'pi' => 3.14))
                     ->prototype('array')
                         ->beforeNormalization()
                             ->ifTrue(function($v){ return is_string($v) && 0 === strpos($v, '@'); })
@@ -117,7 +117,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('autoescape')->end()
-                ->scalarNode('base_template_class')->setExample('Twig_Template')->end()
+                ->scalarNode('base_template_class')->example('Twig_Template')->end()
                 ->scalarNode('cache')->defaultValue('%kernel.cache_dir%/twig')->end()
                 ->scalarNode('charset')->defaultValue('%kernel.charset%')->end()
                 ->scalarNode('debug')->defaultValue('%kernel.debug%')->end()

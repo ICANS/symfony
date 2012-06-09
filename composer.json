@@ -16,13 +16,14 @@
         }
     ],
     "require": {
-        "php": ">=5.3.2",
-        "doctrine/common": "2.2.*",
-        "twig/twig": ">=1.1,<2.0-dev"
+        "php": ">=5.3.3",
+        "doctrine/common": ">2.2,<2.4-dev",
+        "twig/twig": ">=1.8,<2.0-dev"
     },
     "replace": {
         "symfony/doctrine-bridge": "self.version",
         "symfony/monolog-bridge": "self.version",
+        "symfony/propel1-bridge": "self.version",
         "symfony/twig-bridge": "self.version",
         "symfony/framework-bundle": "self.version",
         "symfony/security-bundle": "self.version",
@@ -42,6 +43,7 @@
         "symfony/http-foundation": "self.version",
         "symfony/http-kernel": "self.version",
         "symfony/locale": "self.version",
+        "symfony/options-resolver": "self.version",
         "symfony/process": "self.version",
         "symfony/routing": "self.version",
         "symfony/security": "self.version",
@@ -51,13 +53,17 @@
         "symfony/validator": "self.version",
         "symfony/yaml": "self.version"
     },
-    "suggest": {
-        "doctrine/data-fixtures": "1.0.*"
+    "require-dev": {
+        "doctrine/dbal": ">=2.2,<2.4-dev",
+        "doctrine/orm": ">=2.2,<2.4-dev",
+        "doctrine/data-fixtures": "1.0.*",
+        "propel/propel1": "dev-master",
+        "monolog/monolog": "dev-master"
     },
     "autoload": {
         "psr-0": {
             "Symfony": "src/",
-            "SessionHandlerInterface": "src/Symfony/Component/HttpFoundation/Resources/stub"
+            "SessionHandlerInterface": "src/Symfony/Component/HttpFoundation/Resources/stubs"
         }
     },
     "extra": {

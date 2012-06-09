@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Component\Serializer\Encoder;
-
-use Symfony\Component\Serializer\Exception\UnexpectedValueException;
-
 /*
- * This file is part of the Symfony framework.
+ * This file is part of the Symfony package.
  *
  * (c) Fabien Potencier <fabien@symfony.com>
  *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Symfony\Component\Serializer\Encoder;
+
+use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 
 /**
  * Encodes XML data
@@ -124,7 +124,7 @@ class XmlEncoder extends SerializerAwareEncoder implements EncoderInterface, Dec
 
     /**
      * @param DOMNode $node
-     * @param string $val
+     * @param string  $val
      *
      * @return Boolean
      */
@@ -143,7 +143,7 @@ class XmlEncoder extends SerializerAwareEncoder implements EncoderInterface, Dec
 
     /**
      * @param DOMNode $node
-     * @param string $val
+     * @param string  $val
      *
      * @return Boolean
      */
@@ -157,7 +157,7 @@ class XmlEncoder extends SerializerAwareEncoder implements EncoderInterface, Dec
 
     /**
      * @param DOMNode $node
-     * @param string $val
+     * @param string  $val
      *
      * @return Boolean
      */
@@ -170,7 +170,7 @@ class XmlEncoder extends SerializerAwareEncoder implements EncoderInterface, Dec
     }
 
     /**
-     * @param DOMNode $node
+     * @param DOMNode             $node
      * @param DOMDocumentFragment $fragment
      *
      * @return Boolean
@@ -250,8 +250,8 @@ class XmlEncoder extends SerializerAwareEncoder implements EncoderInterface, Dec
     /**
      * Parse the data and convert it to DOMElements
      *
-     * @param DOMNode $parentNode
-     * @param array|object $data data
+     * @param DOMNode      $parentNode
+     * @param array|object $data       data
      *
      * @return Boolean
      */
@@ -350,7 +350,7 @@ class XmlEncoder extends SerializerAwareEncoder implements EncoderInterface, Dec
      * Tests the value being passed and decide what sort of element to create
      *
      * @param DOMNode $node
-     * @param mixed $val
+     * @param mixed   $val
      *
      * @return Boolean
      */

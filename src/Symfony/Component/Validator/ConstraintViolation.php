@@ -20,17 +20,21 @@ class ConstraintViolation
 {
     protected $messageTemplate;
     protected $messageParameters;
+    protected $messagePluralization;
     protected $root;
     protected $propertyPath;
     protected $invalidValue;
+    protected $code;
 
-    public function __construct($messageTemplate, array $messageParameters, $root, $propertyPath, $invalidValue)
+    public function __construct($messageTemplate, array $messageParameters, $root, $propertyPath, $invalidValue, $messagePluralization = null, $code = null)
     {
         $this->messageTemplate = $messageTemplate;
         $this->messageParameters = $messageParameters;
+        $this->messagePluralization = $messagePluralization;
         $this->root = $root;
         $this->propertyPath = $propertyPath;
         $this->invalidValue = $invalidValue;
+        $this->code = $code;
     }
 
     /**
@@ -40,12 +44,17 @@ class ConstraintViolation
     {
         $class = (string) (is_object($this->root) ? get_class($this->root) : $this->root);
         $propertyPath = (string) $this->propertyPath;
+        $code = $this->code;
 
         if ('' !== $propertyPath && '[' !== $propertyPath[0] && '' !== $class) {
             $class .= '.';
         }
 
-        return $class . $propertyPath . ":\n    " . $this->getMessage();
+        if (!empty($code)) {
+            $code = ' (code ' . $code . ')';
+        }
+
+        return $class . $propertyPath . ":\n    " . $this->getMessage() . $code;
     }
 
     /**
@@ -66,6 +75,14 @@ class ConstraintViolation
     public function getMessageParameters()
     {
         return $this->messageParameters;
+    }
+
+    /**
+     * @return integer|null
+     */
+    public function getMessagePluralization()
+    {
+        return $this->messagePluralization;
     }
 
     /**
@@ -101,5 +118,10 @@ class ConstraintViolation
     public function getInvalidValue()
     {
         return $this->invalidValue;
+    }
+
+    public function getCode()
+    {
+        return $this->code;
     }
 }

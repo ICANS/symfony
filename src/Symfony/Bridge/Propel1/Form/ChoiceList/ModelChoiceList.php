@@ -11,6 +11,7 @@
 
 namespace Symfony\Bridge\Propel1\Form\ChoiceList;
 
+use \BaseObject;
 use \Persistent;
 use Symfony\Component\Form\Exception\FormException;
 use Symfony\Component\Form\Exception\StringCastException;
@@ -45,11 +46,11 @@ class ModelChoiceList extends ObjectChoiceList
     private $loaded = false;
 
     /**
-     * @param string $class
-     * @param string $labelPath
-     * @param array $choices
+     * @param string         $class
+     * @param string         $labelPath
+     * @param array          $choices
      * @param \ModelCriteria $queryObject
-     * @param string $groupPath
+     * @param string         $groupPath
      */
     public function __construct($class, $labelPath = null, $choices = null, $queryObject = null, $groupPath = null)
     {
@@ -303,7 +304,7 @@ class ModelChoiceList extends ObjectChoiceList
     protected function createValue($model)
     {
         if (1 === count($this->identifier)) {
-            return current($this->getIdentifierValues($model));
+            return (string) current($this->getIdentifierValues($model));
         }
 
         return parent::createValue($model);
@@ -334,12 +335,17 @@ class ModelChoiceList extends ObjectChoiceList
      * be persisted or added to the idmodel map before. Otherwise an
      * exception is thrown.
      *
-     * @param  object $model  The model for which to get the identifier
+     * @param object $model The model for which to get the identifier
      * @throws FormException   If the model does not exist
      */
     private function getIdentifierValues($model)
     {
         if ($model instanceof Persistent) {
+            return array($model->getPrimaryKey());
+        }
+
+        // readonly="true" models do not implement Persistent.
+        if ($model instanceof BaseObject and method_exists($model, 'getPrimaryKey')) {
             return array($model->getPrimaryKey());
         }
 

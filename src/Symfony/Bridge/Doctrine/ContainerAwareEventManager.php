@@ -13,7 +13,6 @@ namespace Symfony\Bridge\Doctrine;
 
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventManager;
-use Doctrine\Common\EventSubscriber;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -90,7 +89,7 @@ class ContainerAwareEventManager extends EventManager
     /**
      * Adds an event listener that listens on the specified events.
      *
-     * @param string|array $events The event(s) to listen on.
+     * @param string|array  $events   The event(s) to listen on.
      * @param object|string $listener The listener object.
      */
     public function addEventListener($events, $listener)
@@ -116,7 +115,7 @@ class ContainerAwareEventManager extends EventManager
     /**
      * Removes an event listener from the specified events.
      *
-     * @param string|array $events
+     * @param string|array  $events
      * @param object|string $listener
      */
     public function removeEventListener($events, $listener)

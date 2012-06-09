@@ -30,28 +30,73 @@ interface SessionInterface
     function start();
 
     /**
+     * Returns the session ID.
+     *
+     * @return string The session ID.
+     *
+     * @api
+     */
+    function getId();
+
+    /**
+     * Sets the session ID
+     *
+     * @param string $id
+     *
+     * @api
+     */
+    function setId($id);
+
+    /**
+     * Returns the session name.
+     *
+     * @return mixed The session name.
+     *
+     * @api
+     */
+    function getName();
+
+    /**
+     * Sets the session name.
+     *
+     * @param string $name
+     *
+     * @api
+     */
+    function setName($name);
+
+    /**
      * Invalidates the current session.
      *
      * Clears all session attributes and flashes and regenerates the
      * session and deletes the old session from persistence.
      *
+     * @param integer $lifetime Sets the cookie lifetime for the session cookie. A null value
+     *                          will leave the system settings unchanged, 0 sets the cookie
+     *                          to expire with browser session. Time is in seconds, and is
+     *                          not a Unix timestamp.
+     *
      * @return Boolean True if session invalidated, false if error.
      *
      * @api
      */
-    function invalidate();
+    function invalidate($lifetime = null);
 
     /**
      * Migrates the current session to a new session id while maintaining all
      * session attributes.
      *
-     * @param Boolean $destroy Whether to delete the old session or leave it to garbage collection.
+     * @param Boolean $destroy  Whether to delete the old session or leave it to garbage collection.
+     * @param integer $lifetime Sets the cookie lifetime for the session cookie. A null value
+     *                          will leave the system settings unchanged, 0 sets the cookie
+     *                          to expire with browser session. Time is in seconds, and is
+     *                          not a Unix timestamp.
      *
      * @return Boolean True if session migrated, false if error.
      *
      * @api
      */
-    function migrate($destroy = false);
+    function migrate($destroy = false, $lifetime = null);
 
     /**
      * Force the session to be saved and closed.
@@ -128,4 +173,27 @@ interface SessionInterface
      * @api
      */
     function clear();
+
+    /**
+     * Registers a SessionBagInterface with the session.
+     *
+     * @param SessionBagInterface $bag
+     */
+    function registerBag(SessionBagInterface $bag);
+
+    /**
+     * Gets a bag instance by name.
+     *
+     * @param string $name
+     *
+     * @return SessionBagInterface
+     */
+    function getBag($name);
+
+    /**
+     * Gets session meta.
+     *
+     * @return MetadataBag
+     */
+    function getMetadataBag();
 }

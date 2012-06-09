@@ -27,9 +27,9 @@ abstract class FrameworkExtensionTest extends TestCase
         $def = $container->getDefinition('form.type_extension.csrf');
 
         $this->assertTrue($container->getParameter('form.type_extension.csrf.enabled'));
-        $this->assertEquals('%form.type_extension.csrf.enabled%', $def->getArgument(0));
+        $this->assertEquals('%form.type_extension.csrf.enabled%', $def->getArgument(1));
         $this->assertEquals('_csrf', $container->getParameter('form.type_extension.csrf.field_name'));
-        $this->assertEquals('%form.type_extension.csrf.field_name%', $def->getArgument(1));
+        $this->assertEquals('%form.type_extension.csrf.field_name%', $def->getArgument(2));
         $this->assertEquals('s3cr3t', $container->getParameterBag()->resolveValue($container->findDefinition('form.csrf_provider')->getArgument(1)));
     }
 
@@ -78,7 +78,8 @@ abstract class FrameworkExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition('session'), '->registerSessionConfiguration() loads session.xml');
         $this->assertEquals('fr', $container->getParameter('kernel.default_locale'));
         $this->assertTrue($container->getDefinition('session_listener')->getArgument(1));
-        $this->assertEquals('session.storage.native_file', (string) $container->getAlias('session.storage'));
+        $this->assertEquals('session.storage.native', (string) $container->getAlias('session.storage'));
+        $this->assertEquals('session.handler.native_file', (string) $container->getAlias('session.handler'));
 
         $options = $container->getParameter('session.storage.options');
         $this->assertEquals('_SYMFONY', $options['name']);
@@ -87,6 +88,11 @@ abstract class FrameworkExtensionTest extends TestCase
         $this->assertEquals('example.com', $options['cookie_domain']);
         $this->assertTrue($options['cookie_secure']);
         $this->assertTrue($options['cookie_httponly']);
+        $this->assertEquals(108, $options['gc_divisor']);
+        $this->assertEquals(1, $options['gc_probability']);
+        $this->assertEquals(90000, $options['gc_maxlifetime']);
+
+        $this->assertEquals('/path/to/sessions', $container->getParameter('session.save_path'));
     }
 
     public function testSessionDeprecatedMergeFull()
@@ -261,7 +267,7 @@ abstract class FrameworkExtensionTest extends TestCase
 
         $xmlArgs = $container->getParameter('validator.mapping.loader.xml_files_loader.mapping_files');
         $this->assertCount(2, $xmlArgs);
-        $this->assertStringEndsWith('Component/Form/Resources/config/validation.xml', strtr($xmlArgs[0], '\\', '/'));
+        $this->assertStringEndsWith('Component'.DIRECTORY_SEPARATOR.'Form/Resources/config/validation.xml', $xmlArgs[0]);
         $this->assertStringEndsWith('TestBundle'.DIRECTORY_SEPARATOR.'Resources'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'validation.xml', $xmlArgs[1]);
     }
 

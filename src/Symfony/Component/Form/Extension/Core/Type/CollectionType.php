@@ -12,21 +12,23 @@
 namespace Symfony\Component\Form\Extension\Core\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormViewInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener;
-use Symfony\Component\Form\Extension\Core\EventListener\MergeCollectionListener;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class CollectionType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($options['allow_add'] && $options['prototype']) {
-            $prototype = $builder->create($options['prototype_name'], $options['type'], $options['options']);
+            $prototype = $builder->create($options['prototype_name'], $options['type'], array_replace(array(
+                'label' => $options['prototype_name'] . 'label__',
+            ), $options['options']));
             $builder->setAttribute('prototype', $prototype->getForm());
         }
 
@@ -38,65 +40,47 @@ class CollectionType extends AbstractType
             $options['allow_delete']
         );
 
-        $builder
-            ->addEventSubscriber($resizeListener)
-            ->setAttribute('allow_add', $options['allow_add'])
-            ->setAttribute('allow_delete', $options['allow_delete'])
-        ;
+        $builder->addEventSubscriber($resizeListener);
+    }
 
-        // Enable support for adders/removers unless "by_reference" is disabled
-        // (explicit calling of the setter is desired)
-        if ($options['by_reference']) {
-            $builder->addEventSubscriber(new MergeCollectionListener(
-                $options['allow_add'],
-                $options['allow_delete'],
-                MergeCollectionListener::MERGE_INTO_PARENT,
-                $options['add_method'],
-                $options['remove_method']
-            ));
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormViewInterface $view, FormInterface $form, array $options)
+    {
+        $view->addVars(array(
+            'allow_add'    => $options['allow_add'],
+            'allow_delete' => $options['allow_delete'],
+        ));
+
+        if ($form->getConfig()->hasAttribute('prototype')) {
+            $view->setVar('prototype', $form->getConfig()->getAttribute('prototype')->createView($view));
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form)
+    public function finishView(FormViewInterface $view, FormInterface $form, array $options)
     {
-        $view
-            ->set('allow_add', $form->getAttribute('allow_add'))
-            ->set('allow_delete', $form->getAttribute('allow_delete'))
-        ;
-
-        if ($form->hasAttribute('prototype')) {
-            $view->set('prototype', $form->getAttribute('prototype')->createView($view));
+        if ($form->getConfig()->hasAttribute('prototype') && $view->getVar('prototype')->getVar('multipart')) {
+            $view->setVar('multipart', true);
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildViewBottomUp(FormView $view, FormInterface $form)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        if ($form->hasAttribute('prototype') && $view->get('prototype')->get('multipart')) {
-            $view->set('multipart', true);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDefaultOptions(array $options)
-    {
-        return array(
+        $resolver->setDefaults(array(
             'allow_add'      => false,
             'allow_delete'   => false,
-            'add_method'     => null,
-            'remove_method'  => null,
             'prototype'      => true,
             'prototype_name' => '__name__',
             'type'           => 'text',
             'options'        => array(),
-        );
+        ));
     }
 
     /**
